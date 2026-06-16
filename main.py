@@ -31,12 +31,12 @@
 # ------------------------------------------------------------
 
 activities = [
-    ["인터스텔라", 30, "SF"],
-    ["극한직업", 20, "피곤"],
-    ["해리포터", 10, "우울"],
-    ["미드소마", 40, "차분"],
-    ["방 정리하기", 25, "답답"],
-    ["친구에게 연락하기", 15, "우울"],
+    ["인터스텔라", 169, "SF"],
+    ["극한직업", 111, "개그"],
+    ["해리포터와 마법사의 돌", 152, "판타지"],
+    ["미드소마", 147, "스릴러"],
+    ["라라랜드", 126, "로맨스"],
+    ["인사이드아웃", 95, "애니메이션"],
 ]
 
 
@@ -48,54 +48,104 @@ def show_intro():
     """프로그램 제목과 안내를 출력한다."""
     print("=" * 40)
     print("AI 활용 자유 주제 파이썬 미니 프로젝트")
-    print("예시: 기분과 시간에 따른 활동 추천기")
+    print("사용자 선호 장르와 시청 가능한 시간을 고려한 영화 추천")
     print("=" * 40)
 
 
+# 1. 사용자로부터 입력을 받는 함수
 def get_user_input():
-    """사용자에게 기분과 남은 시간을 입력받는다."""
-    mood = input("현재 기분을 입력하세요. 예: 피곤, 우울, 차분, 답답: ")
-    minutes = int(input("사용 가능한 시간을 분 단위로 입력하세요: "))
-    return mood, minutes
+    genre = input("선호하는 장르를 입력하세요: ")
+    time = int(input("시청 가능한 최대 시간을 입력하세요(분): "))
+    return genre, time
 
+# 2. 리스트를 탐색하여 조건에 맞는 영화를 찾는 함수
+def find_movies(movies, genre, max_time):
+    recommendations = [] # 결과를 담을 빈 리스트 생성
+    for movie in movies:
+        # movie[1]은 장르, movie[2]는 시간
+        if movie[1] == genre and movie[2] <= max_time:
+            recommendations.append(movie) # 조건이 맞으면 결과 리스트에 추가
+    return recommendations
 
-def find_recommendations(data, mood, minutes):
-    """2차원 리스트를 반복하며 조건에 맞는 활동을 찾는다."""
-    results = []
-
-    for row in data:
-        name = row[0]
-        required_minutes = row[1]
-        recommended_mood = row[2]
-        activity_type = row[3]
-
-        # 조건문: 사용자의 기분과 시간이 활동 조건에 맞는지 판단한다.
-        if recommended_mood == mood and required_minutes <= minutes:
-            results.append([name, required_minutes, activity_type])
-
-    return results
-
-
+# 3. 결과를 출력하는 함수
 def print_result(results):
-    """추천 결과를 출력한다."""
-    print("\n[추천 결과]")
-
     if len(results) == 0:
-        print("조건에 맞는 활동이 없습니다.")
-        print("시간을 늘리거나 다른 기분을 입력해 보세요.")
+        print("조건에 맞는 영화가 없습니다.")
     else:
-        for item in results:
-            print(f"- {item[0]} / {item[1]}분 / 유형: {item[2]}")
+        print("추천 영화 목록:")
+        for movie in results:
+            print(f"- 제목: {movie[0]}, 시간: {movie[2]}분")
 
+# --- 프로그램 실행 흐름 (메인 영역) ---
+# 영화 데이터(2차원 리스트)
+movies = [
+    ["인터스텔라", "SF", 169, 12],
+    ["인사이드아웃", "애니메이션", 95, 0],
+    ["극한직업", "코미디", 111, 15]
+    ["해리포터와 마법사의 돌", 152, "판타지"],
+    ["미드소마", 147, "스릴러"],
+    ["라라랜드", 126, "로맨스"],
+    
+]
 
-def main():
-    show_intro()
-    mood, minutes = get_user_input()
-    results = find_recommendations(activities, mood, minutes)
-    print_result(results)
-
+# 함수 호출 및 데이터 전달
+my_genre, my_time = get_user_input()
+result_list = find_movies(movies, my_genre, my_time)
+print_result(result_list)
 
 # ------------------------------------------------------------
 # 3. 프로그램 실행
 # ------------------------------------------------------------
-main()
+# # 1. 먼저 필요한 함수들을 정의합니다.
+
+def get_user_input():
+    """사용자에게 선호 장르와 시간을 입력받습니다."""
+    genre = input("선호하는 장르를 입력하세요: ")
+    time = int(input("시청 가능한 최대 시간을 입력하세요(분): "))
+    return genre, time
+
+def find_recommendations(data, genre, minutes):
+    """2차원 리스트를 반복하며 조건에 맞는 영화를 찾습니다."""
+    results = []
+    for row in data:
+        name = row[0]
+        movie_genre = row[1]
+        movie_time = row[2]
+        
+        # 조건문: 장르와 시간이 조건에 맞는지 판단
+        if movie_genre == genre and movie_time <= minutes:
+            results.append(row)
+    return results
+
+def print_result(results):
+    """결과를 출력합니다."""
+    if len(results) == 0:
+        print("조건에 맞는 영화가 없습니다.")
+    else:
+        print(f"추천 영화 {len(results)}편을 찾았습니다:")
+        for movie in results:
+            print(f"- 제목: {movie[0]}, 장르: {movie[1]}, 시간: {movie[2]}분")
+
+# 2. 메인 실행 흐름을 정의합니다.
+def main():
+    # 영화 데이터 정의
+    movies = [
+        ["인터스텔라", "SF", 169, 12],
+        ["인사이드아웃", "애니메이션", 95, 0],
+        ["극한직업", "코미디", 111, 15]
+    ]
+    
+    print("=== 영화 추천 프로그램을 시작합니다 ===")
+    
+    # [중요] 여기서 입력받은 값을 변수에 담아주어야 합니다!
+    user_genre, user_time = get_user_input() 
+    
+    # 위에서 담은 변수를 전달합니다.
+    results = find_recommendations(movies, user_genre, user_time)
+    
+    # 결과를 출력합니다.
+    print_result(results)
+
+# 3. 프로그램을 실행합니다.
+if __name__ == "__main__":
+    main()
